@@ -1188,7 +1188,11 @@ static void mxf_write_wav_common(AVFormatContext *s, AVStream *st, const UID key
 {
     AVIOContext *pb = s->pb;
 
-    mxf_write_generic_sound_common(s, st, key, size+6+8);
+    mxf_write_generic_sound_common(s, st, key, size+6+8+20); // sound compression adds 20 bytes
+
+    //write sound compression
+    mxf_write_local_tag(pb, 16, 0x3D06);
+    avio_write(pb, mxf_essence_container_uls[1].codec_ul, 16);
 
     mxf_write_local_tag(pb, 2, 0x3D0A);
     avio_wb16(pb, st->codec->block_align);

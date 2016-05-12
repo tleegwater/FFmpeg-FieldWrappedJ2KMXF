@@ -1095,8 +1095,9 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
         avio_wb32(pb, f2);
 
     mxf_write_local_tag(pb, 8, 0x320E);
-    avio_wb32(pb, sc->aspect_ratio.num);
-    avio_wb32(pb, sc->aspect_ratio.den);
+    avio_wb32(pb, 4);                     // hardcoded aspect ratio
+    avio_wb32(pb, 3);
+
 
     mxf_write_local_tag(pb, 16, 0x3201);
     avio_write(pb, *sc->codec_ul, 16);

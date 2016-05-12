@@ -1641,7 +1641,7 @@ static int mxf_write_partition(AVFormatContext *s, int bodysid,
 
     // write partition value
     avio_wb16(pb, 1); // majorVersion
-    avio_wb16(pb, 2); // minorVersion
+    avio_wb16(pb, 3); // minorVersion                 //mxf version 1.3
     avio_wb32(pb, KAG_SIZE); // KAGSize
 
     avio_wb64(pb, partition_offset); // ThisPartition

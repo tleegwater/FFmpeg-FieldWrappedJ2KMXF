@@ -1047,7 +1047,7 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
 
     // presentation Y offset
     mxf_write_local_tag(pb, 4, 0x320B);
-    avio_wb32(pb, (st->codecpar->height - display_height)>>sc->interlaced);
+    avio_wb32(pb, 0>>sc->interlaced);                 // set y offset to 0
 
     // component depth
     mxf_write_local_tag(pb, 4, 0x3301);

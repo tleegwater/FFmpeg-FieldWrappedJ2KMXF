@@ -626,7 +626,7 @@ static void mxf_write_preface(AVFormatContext *s)
 
     // write version
     mxf_write_local_tag(pb, 2, 0x3B05);
-    avio_wb16(pb, 258); // v1.2
+    avio_wb16(pb, 259); // v1.3                         //use mxf version 1.3
 
     // write identification_refs
     mxf_write_local_tag(pb, 16 + 8, 0x3B06);

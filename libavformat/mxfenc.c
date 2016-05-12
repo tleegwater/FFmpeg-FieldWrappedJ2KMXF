@@ -1010,6 +1010,10 @@ static const UID mxf_generic_sound_descriptor_key = { 0x06,0x0E,0x2B,0x34,0x02,0
 static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID key, unsigned size)
 {
     MXFStreamContext *sc = st->priv_data;
+
+    sc->interlaced = 1;             //set interlaced and field modes
+    sc->field_dominance = 1;
+
     AVIOContext *pb = s->pb;
     int stored_height = (st->codecpar->height+15)/16*16;
     int display_height;

@@ -2594,6 +2594,10 @@ static int mxf_write_footer(AVFormatContext *s)
         if ((err = mxf_write_partition(s, 0, 2, footer_partition_key, 0)) < 0)
             goto end;
         mxf_write_klv_fill(s);
+        mxf_write_primer_pack(s);
+        mxf_write_klv_fill(s);                  //write footer metadata
+        mxf_write_footer_metadata_sets(s);
+        mxf_write_klv_fill(s);
         mxf_write_index_table_segment(s);
     }
 

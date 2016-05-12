@@ -1030,7 +1030,7 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
     avio_wb32(pb, st->codecpar->width);
 
     mxf_write_local_tag(pb, 4, 0x3202);
-    avio_wb32(pb, stored_height>>sc->interlaced);
+    avio_wb32(pb, (stored_height*2)>>sc->interlaced);   //double height because of field wrap
 
     mxf_write_local_tag(pb, 4, 0x3209);
     avio_wb32(pb, st->codecpar->width);

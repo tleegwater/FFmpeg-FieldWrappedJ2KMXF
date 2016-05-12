@@ -1059,7 +1059,7 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
 
     // color siting
     mxf_write_local_tag(pb, 1, 0x3303);
-    avio_w8(pb, sc->color_siting);
+    avio_w8(pb, 255);                             //set color siting to 255
 
     if (sc->signal_standard) {
         mxf_write_local_tag(pb, 1, 0x3215);

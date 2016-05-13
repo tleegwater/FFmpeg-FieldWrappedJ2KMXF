@@ -818,7 +818,7 @@ static void mxf_write_track(AVFormatContext *s, AVStream *st, enum MXFMetadataSe
 
     // write track name
     if (st != mxf->timecode_track) {
-      AVCodecParameters *cc = st->codecpar;
+      AVCodecContext *cc = st->codec;
       const char *trackname;
 
       switch (cc->codec_type) {
@@ -1057,7 +1057,7 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
         display_height = 486;
     else
 
-    display_height = st->codecpar->height * 2;        //double height because of field wrap
+    display_height = st->codec->height * 2;        //double height because of field wrap
 
     mxf_write_local_tag(pb, 4, 0x3208);
     avio_wb32(pb, display_height>>sc->interlaced);
@@ -1089,11 +1089,11 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
     avio_w8(pb, sc->interlaced);
 
     // video line map
-    switch (st->codecpar->height) {
+    switch (st->codec->height) {
     case  288: f1 =  7; f2 = 320; break;                   //add linemap for half height video
-    case  576: f1 = 23; f2 = st->codecpar->codec_id == AV_CODEC_ID_DVVIDEO ? 335 : 336; break;
+    case  576: f1 = 23; f2 = st->codec->codec_id == AV_CODEC_ID_DVVIDEO ? 335 : 336; break;
     case  608: f1 =  7; f2 = 320; break;
-    case  480: f1 = 20; f2 = st->codecpar->codec_id == AV_CODEC_ID_DVVIDEO ? 285 : 283; break;
+    case  480: f1 = 20; f2 = st->codec->codec_id == AV_CODEC_ID_DVVIDEO ? 285 : 283; break;
     case  512: f1 =  7; f2 = 270; break;
     case  720: f1 = 26; f2 =   0; break; // progressive
     case 1080: f1 = 21; f2 = 584; break;

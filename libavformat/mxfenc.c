@@ -1038,7 +1038,8 @@ static void mxf_write_cdci_common(AVFormatContext *s, AVStream *st, const UID ke
     else if (st->codec->height == 512)  // NTSC + VBI
         display_height = 486;
     else
-        display_height = st->codec->height;
+
+    display_height = st->codecpar->height * 2;        //double height because of field wrap
 
     mxf_write_local_tag(pb, 4, 0x3208);
     avio_wb32(pb, display_height>>sc->interlaced);

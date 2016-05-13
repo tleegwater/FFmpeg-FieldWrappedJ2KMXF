@@ -820,7 +820,7 @@ static void mxf_write_track(AVFormatContext *s, AVStream *st, enum MXFMetadataSe
 
     // write track name
     if (st != mxf->timecode_track) {
-      AVCodecContext *cc = st->codec;
+      AVCodecParameters *cc = st->codecpar;
       const char *trackname;
 
       switch (cc->codec_type) {

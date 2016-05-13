@@ -816,6 +816,24 @@ static void mxf_write_track(AVFormatContext *s, AVStream *st, enum MXFMetadataSe
     mxf_write_local_tag(pb, 8, 0x4B02);
     avio_wb64(pb, 0);
 
+    // write track name
+    if (st != mxf->timecode_track) {
+      AVCodecContext *cc = st->codec;
+      const char *trackname;
+
+      switch (cc->codec_type) {
+      case  AVMEDIA_TYPE_UNKNOWN    : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_VIDEO      : trackname = "Picture"; break;
+      case  AVMEDIA_TYPE_AUDIO      : trackname = "Sound"; break;
+      case  AVMEDIA_TYPE_DATA       : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_SUBTITLE   : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_ATTACHMENT : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_NB         : trackname = "Unknown"; break;
+      default                       : trackname = "Unknown"; break;
+      }
+      mxf_write_local_tag_utf16(pb, 0x4802, trackname); // Track Name
+    }
+
     // write sequence refs
     mxf_write_local_tag(pb, 16, 0x4803);
     mxf_write_uuid(pb, type == MaterialPackage ? Sequence: Sequence + TypeBottom, st->index);

@@ -781,10 +781,26 @@ static void mxf_write_track(AVFormatContext *s, AVStream *st, enum MXFMetadataSe
     MXFContext *mxf = s->priv_data;
     AVIOContext *pb = s->pb;
     MXFStreamContext *sc = st->priv_data;
+      
+    AVCodecContext *cc = st->codec;
+    const char *trackname = "Unknown";          //moved trackname determination to top.
+
+    if (st != mxf->timecode_track) {
+      switch (cc->codec_type) {
+      case  AVMEDIA_TYPE_UNKNOWN    : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_VIDEO      : trackname = "Picture"; break;
+      case  AVMEDIA_TYPE_AUDIO      : trackname = "Sound"; break;
+      case  AVMEDIA_TYPE_DATA       : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_SUBTITLE   : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_ATTACHMENT : trackname = "Unknown"; break;
+      case  AVMEDIA_TYPE_NB         : trackname = "Unknown"; break;
+      default                       : trackname = "Unknown"; break;
+      }
+    }
 
     mxf_write_metadata_key(pb, 0x013b00);
     PRINT_KEY(s, "track key", pb->buf_ptr - 16);
-    klv_encode_ber_length(pb, 80);
+    klv_encode_ber_length(pb, 80 + mxf_utf16_local_tag_length(trackname) );   //add length of trackname
 
     // write track uid
     mxf_write_local_tag(pb, 16, 0x3C0A);
@@ -817,23 +833,23 @@ static void mxf_write_track(AVFormatContext *s, AVStream *st, enum MXFMetadataSe
     avio_wb64(pb, 0);
 
     // write track name
-    if (st != mxf->timecode_track) {
-      AVCodecContext *cc = st->codec;
-      const char *trackname;
-
-      switch (cc->codec_type) {
-      case  AVMEDIA_TYPE_UNKNOWN    : trackname = "Unknown"; break;
-      case  AVMEDIA_TYPE_VIDEO      : trackname = "Picture"; break;
-      case  AVMEDIA_TYPE_AUDIO      : trackname = "Sound"; break;
-      case  AVMEDIA_TYPE_DATA       : trackname = "Unknown"; break;
-      case  AVMEDIA_TYPE_SUBTITLE   : trackname = "Unknown"; break;
-      case  AVMEDIA_TYPE_ATTACHMENT : trackname = "Unknown"; break;
-      case  AVMEDIA_TYPE_NB         : trackname = "Unknown"; break;
-      default                       : trackname = "Unknown"; break;
-      }
+ //   if (st != mxf->timecode_track) {
+ //     AVCodecContext *cc = st->codec;
+ //     const char *trackname;
+//
+ //     switch (cc->codec_type) {
+ //     case  AVMEDIA_TYPE_UNKNOWN    : trackname = "Unknown"; break;
+ //     case  AVMEDIA_TYPE_VIDEO      : trackname = "Picture"; break;
+ //     case  AVMEDIA_TYPE_AUDIO      : trackname = "Sound"; break;
+ //     case  AVMEDIA_TYPE_DATA       : trackname = "Unknown"; break;
+ //     case  AVMEDIA_TYPE_SUBTITLE   : trackname = "Unknown"; break;
+ //     case  AVMEDIA_TYPE_ATTACHMENT : trackname = "Unknown"; break;
+ //     case  AVMEDIA_TYPE_NB         : trackname = "Unknown"; break;
+ //     default                       : trackname = "Unknown"; break;
+ //     }
       mxf_write_local_tag_utf16(pb, 0x4802, trackname); // Track Name
-    }
-
+ //   }
+//
     // write sequence refs
     mxf_write_local_tag(pb, 16, 0x4803);
     mxf_write_uuid(pb, type == MaterialPackage ? Sequence: Sequence + TypeBottom, st->index);

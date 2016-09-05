@@ -61,6 +61,8 @@ extern AVOutputFormat ff_mxf_opatom_muxer;
 #define EDIT_UNITS_PER_BODY 250
 #define KAG_SIZE 512
 
+int write_body = 0;
+
 typedef struct MXFLocalTagPair {
     int local_tag;
     UID uid;
@@ -2532,7 +2534,7 @@ static int mxf_write_packet(AVFormatContext *s, AVPacket *pkt)
     if (st->index == 0) {
         if (!mxf->edit_unit_byte_count &&
             (!mxf->edit_units_count || mxf->edit_units_count > EDIT_UNITS_PER_BODY) &&
-            !(ie.flags & 0x33)) { // I frame, Gop start
+            !(ie.flags & 0x33) && write_body ) { // I frame, Gop start
             mxf_write_klv_fill(s);
             if ((err = mxf_write_partition(s, 1, 2, body_partition_key, 0)) < 0)
                 return err;
